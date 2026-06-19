@@ -99,6 +99,17 @@ function showResult(data) {
     resultSummary.innerHTML += `<div class="metric" style="grid-column:1/-1"><div class="label">Bloqueos</div><div class="value" style="font-size:0.95rem;color:#dc2626">${data.blockers.map((b) => b.code).join(", ")}</div></div>`;
   }
 
+  if (data.required_approvals?.length) {
+    const approvals = data.required_approvals
+      .map((a) => `<li><strong>${a.role}</strong>${a.blocking ? " (bloqueante)" : ""}: ${a.reason}</li>`)
+      .join("");
+    resultSummary.innerHTML += `<div class="metric" style="grid-column:1/-1"><div class="label">Aprobaciones requeridas</div><ul style="margin:8px 0 0;padding-left:18px;font-size:0.9rem;color:#334155">${approvals}</ul></div>`;
+  }
+
+  if (data.can_issue_report === false) {
+    resultSummary.innerHTML += `<div class="metric" style="grid-column:1/-1"><div class="label">Emisión reporte</div><div class="value" style="font-size:0.95rem;color:#dc2626">Bloqueada hasta resolver aprobaciones/bloqueos</div></div>`;
+  }
+
   reportFrame.src = data.report_url;
   reportFrame.classList.remove("hidden");
   resultPanel.classList.remove("hidden");

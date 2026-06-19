@@ -58,6 +58,9 @@ export function calculateScenario(ctx: CalculationContext, scenarioId: string): 
     formula: "min(fixed_salary + avg_variable_3m + included_allowances, uf_value * 90)",
     inputs: ["fixed_salary", "avg_variable_3m", "included_allowances", "uf_value"],
     rule_refs: ["CL_CT_ART_172"],
+    legal_basis: ["Código del Trabajo art. 172"],
+    evidence_refs: ["payroll.fixed_salary", "payroll.avg_variable_3m", "config.uf_value"],
+    reviewer_status: "SYSTEM_CALCULATED",
   });
 
   const service = calculateService(

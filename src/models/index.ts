@@ -28,6 +28,18 @@ export type { AuditEntry, AuditLog } from "./audit.js";
 export type { ProcessFiniquitoResult } from "./process-result.js";
 
 export type {
+  BurdenOfProofFact,
+  DismissalLetter,
+  DismissalLetterReview,
+  EvidenceItem,
+  EvidenceMatrix,
+  FiniquitoExecution,
+  Fix1Result,
+  LitigationCaseFile,
+  ProofScoreResult,
+} from "./fix1.js";
+
+export type {
   EvidenceChecklistItem,
   ExecutiveSummary,
   Report,
@@ -48,4 +60,11 @@ export type {
   ScenarioOverrides,
 } from "./engine.js";
 
-export type { WorkflowContext, WorkflowEvent, WorkflowState } from "./workflow.js";
+export type {
+  ApprovalRequirement,
+  ApprovalRole,
+  WorkflowContext,
+  WorkflowEvent,
+  WorkflowPlan,
+  WorkflowState,
+} from "./workflow.js";

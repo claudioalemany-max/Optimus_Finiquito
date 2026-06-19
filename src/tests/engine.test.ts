@@ -128,5 +128,6 @@ test("processFiniquitoCase returns report, audit log and workflow recommendation
   assert.equal(processed.report.executive_summary.client_name, input.client.name);
   assert.ok(processed.auditLog.entries.length >= 3);
   assert.equal(processed.recommendedWorkflowState, "LEGAL_CLASSIFIED");
+  assert.ok(processed.workflowPlan.required_approvals.length >= 2);
   assert.ok(processed.report.disclaimer?.includes("lawyer review"));
 });

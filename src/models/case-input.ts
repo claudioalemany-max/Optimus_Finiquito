@@ -1,4 +1,5 @@
 import type { Money } from "./common.js";
+import type { DismissalLetter, EvidenceItem, FiniquitoExecution } from "./fix1.js";
 
 export type LegalRegime =
   | "PRIVATE_CODIGO_TRABAJO"
@@ -122,4 +123,7 @@ export interface CaseInput {
   config: Config;
   risk_factors?: RiskFactors;
   public_sector_factors?: PublicSectorFactors;
+  evidence_items?: EvidenceItem[];
+  dismissal_letter?: DismissalLetter;
+  finiquito_execution?: FiniquitoExecution;
 }

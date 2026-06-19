@@ -251,6 +251,50 @@ export function renderHtmlReport(result: ProcessFiniquitoResult): string {
     </section>
 
     <section class="card">
+      <h2>Fix1 — Prueba litigiosa y gaps probatorios</h2>
+      <p><strong>Score promedio:</strong> ${result.fix1.proof_score.average_score.toFixed(1)} / 5</p>
+      <p><strong>Tribunal ready:</strong> ${result.fix1.proof_score.tribunal_ready ? "Sí" : "No"}</p>
+      ${
+        result.fix1.evidence_matrix.proof_gaps.length
+          ? `<p><strong>Gaps:</strong> ${result.fix1.evidence_matrix.proof_gaps.map(escapeHtml).join("; ")}</p>`
+          : "<p>Sin gaps críticos de prueba.</p>"
+      }
+      ${
+        result.fix1.court_risk_flags.length
+          ? `<ul>${result.fix1.court_risk_flags
+              .map((f) => `<li><strong>${escapeHtml(f.code)}</strong>: ${escapeHtml(f.message)}</li>`)
+              .join("")}</ul>`
+          : ""
+      }
+    </section>
+
+    <section class="card">
+      <h2>Aprobaciones requeridas</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Rol</th>
+            <th>Motivo</th>
+            <th>Bloqueante</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${result.workflowPlan.required_approvals
+            .map(
+              (approval) => `
+          <tr>
+            <td>${escapeHtml(approval.role)}</td>
+            <td>${escapeHtml(approval.reason)}</td>
+            <td>${approval.blocking ? "Sí" : "No"}</td>
+          </tr>`,
+            )
+            .join("")}
+        </tbody>
+      </table>
+      <p class="meta">Puede emitir reporte: ${result.workflowPlan.can_issue_report ? "Sí" : "No"} · Puede ejecutar: ${result.workflowPlan.can_execute ? "Sí" : "No"}</p>
+    </section>
+
+    <section class="card">
       <h2>Comparación de escenarios</h2>
       <table>
         <thead>

@@ -1,0 +1,12 @@
+score_meanings:
+  0: "No evidence"
+  1: "Weak/internal assertion only"
+  2: "Some evidence but incomplete"
+  3: "Adequate contemporaneous evidence"
+  4: "Strong evidence with external support"
+  5: "Court-ready evidence bundle"
+
+critical_block_threshold: 2
+partner_review_threshold: 3
+
+material_amount_clp: 500000

@@ -4,8 +4,10 @@ import type { AuditLog } from "../models/audit.js";
 import type { ProcessFiniquitoResult } from "../models/process-result.js";
 import type { LegalClassification, RiskResult } from "../models/engine.js";
 import type { Report } from "../models/report.js";
-import type { WorkflowState } from "../models/workflow.js";
 import type { CaseCatalog, Ruleset } from "../models/ruleset.js";
+import { buildWorkflowPlan, recommendWorkflowState } from "./workflow-service.js";
+import { runFix1 } from "./fix1-engine.js";
+import { buildLitigationCaseFile } from "./tribunal-export.js";
 import {
   createAuditLog,
   recordCalculation,
@@ -44,19 +46,6 @@ function resolveStatus(
   }
 
   return "EXECUTABLE";
-}
-
-function recommendWorkflowState(status: CalculationStatus): WorkflowState {
-  switch (status) {
-    case "NOT_EXECUTABLE_BLOCKED":
-      return "BLOCKED";
-    case "LEGAL_REVIEW_REQUIRED":
-      return "PARTNER_REVIEW_PENDING";
-    case "EXECUTABLE_WITH_WARNINGS":
-      return "TAX_REVIEW_PENDING";
-    default:
-      return "LEGAL_CLASSIFIED";
-  }
 }
 
 export interface FiniquitoEngineOptions {
@@ -114,18 +103,57 @@ export function processFiniquitoCase(
   let auditLog: AuditLog = createAuditLog(input.case_id);
   auditLog = recordIntake(auditLog, input, actor);
 
-  const { classification, result } = runCalculation(input, { ...options, skipIntakeNormalization: true });
+  const { classification, result: baseResult } = runCalculation(input, { ...options, skipIntakeNormalization: true });
+
+  const fix1 = runFix1(input, classification, baseResult);
+  const result: CalculationResult = { ...baseResult };
+
+  if (fix1.blocked && fix1.blocker_code) {
+    const existing = result.blockers.some((b) => b.code === fix1.blocker_code);
+    if (!existing) {
+      result.blockers.push({
+        code: fix1.blocker_code,
+        severity: "BLOCKER",
+        message:
+          fix1.blocker_code === "PROOF_GAPS_BLOCKED"
+            ? "Critical litigation proof gaps detected."
+            : fix1.blocker_code === "GENERIC_DISMISSAL_LETTER"
+              ? "Dismissal letter facts are generic or insufficient for tribunal defense."
+              : "Fix1 litigation review blocker.",
+        required_action: "Complete evidence matrix and partner review before client report.",
+      });
+    }
+    if (result.status === "EXECUTABLE" || result.status === "EXECUTABLE_WITH_WARNINGS") {
+      result.status = "NOT_EXECUTABLE_BLOCKED";
+    }
+  } else if (fix1.proof_score.partner_review_required && result.status === "EXECUTABLE") {
+    result.status = "LEGAL_REVIEW_REQUIRED";
+  }
+
   auditLog = recordClassification(auditLog, classification, actor);
   auditLog = recordCalculation(auditLog, result, actor);
 
   const report: Report = buildReport(input, classification, result);
+  const workflowPlan = buildWorkflowPlan(input, classification, result);
+  const recommendedWorkflowState =
+    fix1.blocked && result.status === "NOT_EXECUTABLE_BLOCKED" && result.blockers.some((b) => b.code === "FUERO_BLOCKER" || b.code === "SPECIAL_ROUTE_REQUIRED")
+      ? recommendWorkflowState(result, classification)
+      : fix1.blocked
+        ? "PROOF_GAPS_BLOCKED"
+        : recommendWorkflowState(result, classification);
 
-  return {
+  const processResult = {
     input,
     classification,
     calculation: result,
     report,
     auditLog,
-    recommendedWorkflowState: recommendWorkflowState(result.status),
-  };
+    recommendedWorkflowState,
+    workflowPlan,
+    fix1,
+  } as ProcessFiniquitoResult;
+
+  processResult.litigationCaseFile = buildLitigationCaseFile(processResult);
+
+  return processResult;
 }

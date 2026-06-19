@@ -1,0 +1,25 @@
+rules:
+  - code: GENERIC_ART_161_LETTER
+    applies_to_causes: [NECESIDADES_EMPRESA, DESAHUCIO_CONFIANZA]
+    message: "Generic art. 161 dismissal letter facts are tribunal-vulnerable."
+    source: "Chile labor jurisprudence — insufficient factual basis"
+
+  - code: FINIQUITO_CADUCIDAD_RISK
+    applies_when: "finiquito_execution.reservation_text is broad"
+    message: "Broad reservation of rights may limit finiquito/caducidad defense."
+    source: "Supreme Court finiquito doctrine"
+
+  - code: AFC_REFUND_RISK
+    applies_when: "termination.afc_offset_attempted"
+    message: "AFC employer offset may be reversed if causal is improcedent."
+    source: "Santiago labor courts — AFC refund jurisprudence"
+
+  - code: HONORARIOS_RECHARACTERIZATION
+    applies_when: "contract.legal_regime == HONORARIOS"
+    message: "Honorarios recharacterization may convert case to full labor claim."
+    source: "Municipalidad de La Pintana / Junji precedents"
+
+  - code: COTIZACIONES_NULIDAD
+    applies_when: "evidence.cotizaciones_paid == false"
+    message: "Unpaid cotizaciones create nulidad and autodespido exposure."
+    source: "Código del Trabajo — cotizaciones"

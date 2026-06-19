@@ -4,12 +4,14 @@ import type { CaseInput } from "../models/case-input.js";
 import type { ProcessFiniquitoResult } from "../models/process-result.js";
 import { renderHtmlReport } from "./html-report-service.js";
 import { processFiniquitoCase } from "./finiquito-engine.js";
+import { buildTribunalExportJson } from "./tribunal-export.js";
 
 export interface SavedCasePaths {
   full: string;
   report: string;
   calculation: string;
   html: string;
+  tribunal: string;
   baseName: string;
 }
 
@@ -31,12 +33,14 @@ export function runCaseAndSave(input: CaseInput, outputDir: string): SavedCaseRe
     report: join(outputDir, `${baseName}_report.json`),
     calculation: join(outputDir, `${baseName}_calculation.json`),
     html: join(outputDir, `${baseName}_report.html`),
+    tribunal: join(outputDir, `${baseName}_tribunal.json`),
   };
 
   writeFileSync(paths.full, JSON.stringify(result, null, 2), "utf8");
   writeFileSync(paths.report, JSON.stringify(result.report, null, 2), "utf8");
   writeFileSync(paths.calculation, JSON.stringify(result.calculation, null, 2), "utf8");
   writeFileSync(paths.html, renderHtmlReport(result), "utf8");
+  writeFileSync(paths.tribunal, buildTribunalExportJson(result), "utf8");
   writeFileSync(
     join(outputDir, "last-run.txt"),
     [
@@ -44,6 +48,7 @@ export function runCaseAndSave(input: CaseInput, outputDir: string): SavedCaseRe
       `report=${paths.report}`,
       `full=${paths.full}`,
       `calculation=${paths.calculation}`,
+      `tribunal=${paths.tribunal}`,
       `case_id=${result.input.case_id}`,
     ].join("\n"),
     "utf8",

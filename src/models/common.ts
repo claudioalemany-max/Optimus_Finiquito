@@ -16,6 +16,9 @@ export interface TraceLine {
   formula: string;
   inputs?: string[];
   rule_refs: string[];
+  legal_basis?: string[];
+  evidence_refs?: string[];
+  reviewer_status?: string;
   assumptions?: string[];
   warnings?: string[];
 }

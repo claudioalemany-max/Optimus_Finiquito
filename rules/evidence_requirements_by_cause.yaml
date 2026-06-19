@@ -1,0 +1,87 @@
+facts:
+  - fact_id: CARTA_SPECIFIC_FACTS
+    label: "Carta de despido con hechos específicos"
+    party_burden: EMPLOYER
+    minimum_score: 4
+    blocking: true
+    evidence_types:
+      - dismissal_letter
+      - business_need_report
+  - fact_id: BUSINESS_NEED_PROOF
+    label: "Prueba de necesidades de la empresa"
+    party_burden: EMPLOYER
+    minimum_score: 4
+    blocking: true
+    evidence_types:
+      - org_chart
+      - financial_report
+      - role_elimination_proof
+  - fact_id: DT_FILING
+    label: "Comunicación y filing DT"
+    party_burden: EMPLOYER
+    minimum_score: 5
+    blocking: true
+    evidence_types:
+      - dt_filing_proof
+      - delivery_proof
+  - fact_id: COTIZACIONES_PAID
+    label: "Cotizaciones pagadas"
+    party_burden: EMPLOYER
+    minimum_score: 5
+    blocking: true
+    evidence_types:
+      - previred_certificate
+      - afp_certificate
+  - fact_id: DISCIPLINARY_FACTS
+    label: "Hechos disciplinarios específicos"
+    party_burden: EMPLOYER
+    minimum_score: 4
+    blocking: true
+    evidence_types:
+      - incident_record
+      - investigation_file
+  - fact_id: RESIGNATION_VOLUNTARY
+    label: "Voluntariedad de la renuncia"
+    party_burden: EMPLOYER
+    minimum_score: 4
+    blocking: true
+    evidence_types:
+      - signed_resignation
+      - voluntariness_evidence
+  - fact_id: FINIQUITO_EXECUTION
+    label: "Ejecución de finiquito"
+    party_burden: EMPLOYER
+    minimum_score: 3
+    blocking: false
+    evidence_types:
+      - payment_proof
+      - ratification
+      - reservation_text
+
+causes:
+  NECESIDADES_EMPRESA:
+    required_facts:
+      - CARTA_SPECIFIC_FACTS
+      - BUSINESS_NEED_PROOF
+      - DT_FILING
+      - COTIZACIONES_PAID
+  DESAHUCIO_CONFIANZA:
+    required_facts:
+      - CARTA_SPECIFIC_FACTS
+      - DT_FILING
+      - COTIZACIONES_PAID
+  DISCIPLINARIA_160:
+    required_facts:
+      - DISCIPLINARY_FACTS
+      - DT_FILING
+      - COTIZACIONES_PAID
+  RENUNCIA:
+    required_facts:
+      - RESIGNATION_VOLUNTARY
+      - COTIZACIONES_PAID
+  OBRA_FAENA_TERMINO:
+    required_facts:
+      - COTIZACIONES_PAID
+
+default_required_facts:
+  - COTIZACIONES_PAID

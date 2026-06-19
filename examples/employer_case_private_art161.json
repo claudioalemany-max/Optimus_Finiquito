@@ -48,6 +48,42 @@
     "reimbursement_receipts_uploaded": true,
     "deduction_authorization_uploaded": false
   },
+  "dismissal_letter": {
+    "cause_code": "NECESIDADES_EMPRESA",
+    "article": "Art. 161 inc. 1",
+    "facts": "Con fecha 2026-05-15 la empresa reorganizó el área de Operaciones eliminando el cargo de Gerente Operaciones tras caída de 18% en ingresos del segmento sur. El trabajador fue seleccionado por criterios objetivos de dotación y no fue reemplazado en igual función.",
+    "notice_date": "2026-05-15",
+    "delivery_method": "ENTREGA_PERSONAL",
+    "dt_filing": true,
+    "dt_filing_date": "2026-05-16",
+    "cotizaciones_statement": "Cotizaciones previsionales al día al 2026-05-31"
+  },
+  "evidence_items": [
+    {
+      "id": "EV-ORG-001",
+      "type": "org_chart",
+      "file_name": "organigrama_antes_despues.pdf",
+      "date": "2026-05-10",
+      "related_facts": ["BUSINESS_NEED_PROOF"],
+      "admissibility_status": "PENDING"
+    },
+    {
+      "id": "EV-FIN-001",
+      "type": "financial_report",
+      "file_name": "informe_caida_ingresos_q1_2026.pdf",
+      "date": "2026-05-08",
+      "related_facts": ["BUSINESS_NEED_PROOF"],
+      "admissibility_status": "PENDING"
+    },
+    {
+      "id": "EV-PREV-001",
+      "type": "previred_certificate",
+      "file_name": "certificado_previred_mayo_2026.pdf",
+      "date": "2026-06-01",
+      "related_facts": ["COTIZACIONES_PAID"],
+      "admissibility_status": "PENDING"
+    }
+  ],
   "config": {
     "uf_value": 39000,
     "rates": {
