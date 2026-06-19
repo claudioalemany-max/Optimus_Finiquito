@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chile Finiquito Engine</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">⚖</div>
+        <div>
+          <h1>Finiquito Engine</h1>
+          <p>Chile · Asesoría laboral</p>
+        </div>
+      </div>
+
+      <nav class="menu">
+        <button class="menu-item active" data-view="home">Inicio</button>
+        <button class="menu-item" data-view="examples">Ejemplos</button>
+        <button class="menu-item" data-view="upload">Caso propio</button>
+        <button class="menu-item" data-view="recent">Historial</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <p>Servidor local activo</p>
+        <p class="muted">Sujeto a revisión legal</p>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section id="view-home" class="view active">
+        <header class="page-header">
+          <h2>Bienvenido</h2>
+          <p>Selecciona un caso de ejemplo o carga tu propio JSON para calcular el finiquito.</p>
+        </header>
+        <div id="home-cards" class="cards"></div>
+      </section>
+
+      <section id="view-examples" class="view">
+        <header class="page-header">
+          <h2>Casos de ejemplo</h2>
+          <p>Ejecuta un escenario preconfigurado del catálogo.</p>
+        </header>
+        <div id="example-cards" class="cards"></div>
+      </section>
+
+      <section id="view-upload" class="view">
+        <header class="page-header">
+          <h2>Caso personalizado</h2>
+          <p>Sube un archivo JSON con el formato de entrada del caso.</p>
+        </header>
+        <div class="upload-box">
+          <input type="file" id="file-input" accept=".json,application/json">
+          <button id="upload-run" class="btn primary" disabled>Calcular caso</button>
+        </div>
+        <pre id="upload-preview" class="preview hidden"></pre>
+      </section>
+
+      <section id="view-recent" class="view">
+        <header class="page-header">
+          <h2>Historial reciente</h2>
+          <p>Reportes generados en esta sesión o anteriores.</p>
+        </header>
+        <div id="recent-list" class="recent-list"></div>
+      </section>
+
+      <section id="result-panel" class="result-panel hidden">
+        <div class="result-header">
+          <div>
+            <h3 id="result-title">Resultado</h3>
+            <p id="result-meta"></p>
+          </div>
+          <div class="result-actions">
+            <button id="open-report" class="btn primary">Ver reporte completo</button>
+            <button id="close-result" class="btn ghost">Cerrar</button>
+          </div>
+        </div>
+        <div id="result-summary" class="result-summary"></div>
+        <iframe id="report-frame" title="Reporte finiquito" class="report-frame hidden"></iframe>
+      </section>
+    </main>
+  </div>
+
+  <div id="loading" class="loading hidden">
+    <div class="spinner"></div>
+    <p>Calculando finiquito…</p>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

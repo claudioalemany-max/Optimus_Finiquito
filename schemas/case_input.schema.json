@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "case_input.schema.json",
+  "title": "Chile Finiquito Case Input",
+  "type": "object",
+  "required": [
+    "case_id",
+    "client",
+    "worker",
+    "contract",
+    "termination",
+    "payroll",
+    "evidence",
+    "config"
+  ],
+  "properties": {
+    "case_id": { "type": "string" },
+    "rule_version": { "type": "string" },
+    "client": {
+      "type": "object",
+      "required": ["name", "rut"],
+      "properties": {
+        "name": { "type": "string" },
+        "rut": { "type": "string" },
+        "industry": { "type": "string" }
+      }
+    },
+    "worker": {
+      "type": "object",
+      "required": ["name", "rut"],
+      "properties": {
+        "name": { "type": "string" },
+        "rut": { "type": "string" },
+        "role": { "type": "string" }
+      }
+    },
+    "contract": {
+      "type": "object",
+      "required": ["legal_regime", "contract_type", "start_date", "end_date"],
+      "properties": {
+        "legal_regime": {
+          "enum": [
+            "PRIVATE_CODIGO_TRABAJO",
+            "PUBLIC_COMPANY_CODIGO_TRABAJO",
+            "PUBLIC_STATUTORY",
+            "MUNICIPAL",
+            "HONORARIOS",
+            "SPECIAL"
+          ]
+        },
+        "contract_type": {
+          "enum": [
+            "INDEFINITE",
+            "FIXED_TERM",
+            "WORK_SERVICE",
+            "DOMESTIC_WORKER",
+            "HONORARIOS",
+            "PUBLIC_CONTRATA",
+            "PUBLIC_PLANTA"
+          ]
+        },
+        "start_date": { "type": "string", "format": "date" },
+        "end_date": { "type": "string", "format": "date" },
+        "collective_agreement": { "type": "boolean" },
+        "high_trust_role": { "type": "boolean" }
+      }
+    },
+    "termination": {
+      "type": "object",
+      "required": ["cause_code", "notice_given_30_days"],
+      "properties": {
+        "cause_code": { "type": "string" },
+        "notice_given_30_days": { "type": "boolean" },
+        "resignation_voluntary_evidence": { "type": "boolean" },
+        "afc_offset_attempted": { "type": "boolean" }
+      }
+    },
+    "payroll": {
+      "type": "object",
+      "required": [
+        "fixed_salary",
+        "avg_variable_3m",
+        "included_allowances",
+        "pending_salary",
+        "taxable_bonus",
+        "vacation_calendar_days"
+      ],
+      "properties": {
+        "fixed_salary": { "type": "integer", "minimum": 0 },
+        "avg_variable_3m": { "type": "integer", "minimum": 0 },
+        "included_allowances": { "type": "integer", "minimum": 0 },
+        "pending_salary": { "type": "integer", "minimum": 0 },
+        "taxable_bonus": { "type": "integer", "minimum": 0 },
+        "non_taxable_bonus_or_indemnity": { "type": "integer", "minimum": 0 },
+        "reimbursements": { "type": "integer", "minimum": 0 },
+        "authorized_deductions": { "type": "integer", "minimum": 0 },
+        "vacation_business_days": { "type": "number", "minimum": 0 },
+        "vacation_calendar_days": { "type": "number", "minimum": 0 },
+        "obra_faena_months": { "type": "number", "minimum": 0 },
+        "obra_faena_fraction_gt_15": { "type": "boolean" }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "fuero": { "type": "boolean" },
+        "fuero_type": { "type": "string" },
+        "medical_leave": { "type": "boolean" },
+        "cotizaciones_paid": { "type": "boolean" },
+        "business_need_evidence": { "type": "boolean" },
+        "disciplinary_evidence": { "type": "boolean" },
+        "bonus_policy_uploaded": { "type": "boolean" },
+        "reimbursement_receipts_uploaded": { "type": "boolean" },
+        "deduction_authorization_uploaded": { "type": "boolean" }
+      }
+    },
+    "config": {
+      "type": "object",
+      "required": ["uf_value", "rates"],
+      "properties": {
+        "uf_value": { "type": "number" },
+        "rates": {
+          "type": "object",
+          "properties": {
+            "afp_worker": { "type": "number" },
+            "health_worker": { "type": "number" },
+            "afc_worker_indefinite": { "type": "number" },
+            "afc_employer_indefinite": { "type": "number" },
+            "afc_employer_fixed_or_work": { "type": "number" },
+            "sis_employer": { "type": "number" },
+            "mutual_employer": { "type": "number" },
+            "employer_pension": { "type": "number" }
+          }
+        }
+      }
+    }
+  }
+}
+

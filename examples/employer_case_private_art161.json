@@ -1,0 +1,65 @@
+{
+  "case_id": "CASE-2026-001",
+  "rule_version": "2026-06",
+  "client": {
+    "name": "Cliente SpA",
+    "rut": "76.000.000-0",
+    "industry": "Services"
+  },
+  "worker": {
+    "name": "Trabajador Ejemplo",
+    "rut": "12.345.678-9",
+    "role": "Gerente Operaciones"
+  },
+  "contract": {
+    "legal_regime": "PRIVATE_CODIGO_TRABAJO",
+    "contract_type": "INDEFINITE",
+    "start_date": "2020-03-01",
+    "end_date": "2026-06-30",
+    "collective_agreement": false,
+    "high_trust_role": false
+  },
+  "termination": {
+    "cause_code": "NECESIDADES_EMPRESA",
+    "notice_given_30_days": false,
+    "afc_offset_attempted": false
+  },
+  "payroll": {
+    "fixed_salary": 2500000,
+    "avg_variable_3m": 300000,
+    "included_allowances": 150000,
+    "pending_salary": 2500000,
+    "taxable_bonus": 500000,
+    "non_taxable_bonus_or_indemnity": 0,
+    "reimbursements": 120000,
+    "authorized_deductions": 0,
+    "vacation_business_days": 10,
+    "vacation_calendar_days": 14,
+    "obra_faena_months": 0,
+    "obra_faena_fraction_gt_15": false
+  },
+  "evidence": {
+    "fuero": false,
+    "medical_leave": false,
+    "cotizaciones_paid": true,
+    "business_need_evidence": true,
+    "disciplinary_evidence": false,
+    "bonus_policy_uploaded": true,
+    "reimbursement_receipts_uploaded": true,
+    "deduction_authorization_uploaded": false
+  },
+  "config": {
+    "uf_value": 39000,
+    "rates": {
+      "afp_worker": 0.1144,
+      "health_worker": 0.07,
+      "afc_worker_indefinite": 0.006,
+      "afc_employer_indefinite": 0.024,
+      "afc_employer_fixed_or_work": 0.03,
+      "sis_employer": 0.0149,
+      "mutual_employer": 0.0093,
+      "employer_pension": 0.01
+    }
+  }
+}
+

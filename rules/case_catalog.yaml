@@ -1,0 +1,93 @@
+cases:
+  - cause_code: MUTUO_ACUERDO
+    article: "Art. 159 N°1"
+    ordinary_private_engine: true
+    ias_applies: false
+    notice_applies: false
+    vacation_payable: true
+    default_risk: LOW
+
+  - cause_code: RENUNCIA
+    article: "Art. 159 N°2"
+    ordinary_private_engine: true
+    ias_applies: false
+    notice_applies: false
+    vacation_payable: true
+    default_risk: MEDIUM
+    risk_modules:
+      - invalid_resignation
+
+  - cause_code: VENCIMIENTO_PLAZO
+    article: "Art. 159 N°4"
+    ordinary_private_engine: true
+    ias_applies: false
+    notice_applies: false
+    vacation_payable: true
+    default_risk: MEDIUM
+    warnings:
+      - check_renewals_and_indefinite_risk
+
+  - cause_code: OBRA_FAENA_TERMINO
+    article: "Art. 159 N°5 / Art. 163"
+    ordinary_private_engine: true
+    ias_applies: false
+    obra_faena_indemnity_applies: true
+    notice_applies: false
+    vacation_payable: true
+    default_risk: MEDIUM_HIGH
+
+  - cause_code: CASO_FORTUITO
+    article: "Art. 159 N°6"
+    ordinary_private_engine: true
+    ias_applies: false
+    notice_applies: false
+    vacation_payable: true
+    default_risk: HIGH
+    partner_review_required: true
+
+  - cause_code: DISCIPLINARIA_160
+    article: "Art. 160"
+    ordinary_private_engine: true
+    ias_applies: false
+    notice_applies: false
+    vacation_payable: true
+    default_risk: HIGH
+    partner_review_required: true
+
+  - cause_code: NECESIDADES_EMPRESA
+    article: "Art. 161 inc. 1"
+    ordinary_private_engine: true
+    ias_applies: true
+    notice_applies: true
+    vacation_payable: true
+    default_risk: HIGH
+    partner_review_required: true
+
+  - cause_code: DESAHUCIO_CONFIANZA
+    article: "Art. 161 inc. 2"
+    ordinary_private_engine: true
+    ias_applies: true
+    notice_applies: true
+    vacation_payable: true
+    default_risk: MEDIUM_HIGH
+    partner_review_required: true
+
+  - cause_code: INSOLVENCIA_163BIS
+    article: "Art. 163 bis"
+    ordinary_private_engine: true
+    ias_applies: true
+    notice_applies: conditional
+    vacation_payable: true
+    default_risk: HIGH
+    partner_review_required: true
+
+  - cause_code: HONORARIOS_RIESGO
+    ordinary_private_engine: false
+    route_to: honorarios_recharacterization_module
+    default_risk: CRITICAL
+
+  - cause_code: SECTOR_PUBLICO_CONTRATA
+    ordinary_private_engine: false
+    route_to: public_sector_module
+    default_risk: CRITICAL
+

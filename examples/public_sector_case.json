@@ -1,0 +1,58 @@
+{
+  "case_id": "CASE-2026-PUB-001",
+  "rule_version": "2026-06",
+  "client": {
+    "name": "Servicio Público",
+    "rut": "61.000.000-0"
+  },
+  "worker": {
+    "name": "Funcionario Contrata",
+    "rut": "11.222.333-4",
+    "role": "Profesional grado X"
+  },
+  "contract": {
+    "legal_regime": "PUBLIC_STATUTORY",
+    "contract_type": "PUBLIC_CONTRATA",
+    "start_date": "2018-01-01",
+    "end_date": "2026-12-31",
+    "collective_agreement": false,
+    "high_trust_role": false
+  },
+  "termination": {
+    "cause_code": "SECTOR_PUBLICO_CONTRATA",
+    "notice_given_30_days": false,
+    "afc_offset_attempted": false
+  },
+  "payroll": {
+    "fixed_salary": 2200000,
+    "avg_variable_3m": 0,
+    "included_allowances": 0,
+    "pending_salary": 0,
+    "taxable_bonus": 0,
+    "non_taxable_bonus_or_indemnity": 0,
+    "reimbursements": 0,
+    "authorized_deductions": 0,
+    "vacation_business_days": 0,
+    "vacation_calendar_days": 0
+  },
+  "evidence": {
+    "fuero": false,
+    "medical_leave": false,
+    "cotizaciones_paid": true,
+    "business_need_evidence": false
+  },
+  "public_sector_factors": {
+    "years_continuous_service": 8,
+    "act_of_non_renewal_exists": false,
+    "motivation_documented": false,
+    "confianza_legitima_risk": true
+  },
+  "config": {
+    "uf_value": 39000,
+    "rates": {
+      "afp_worker": 0.1144,
+      "health_worker": 0.07
+    }
+  }
+}
+

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "report.schema.json",
+  "title": "Finiquito Client Report",
+  "type": "object",
+  "required": ["case_id", "report_status", "executive_summary", "scenario_comparison", "risk_flags"],
+  "properties": {
+    "case_id": { "type": "string" },
+    "report_status": {
+      "enum": [
+        "DRAFT",
+        "INTERNAL_REVIEW",
+        "APPROVED_FOR_CLIENT",
+        "ISSUED_TO_CLIENT"
+      ]
+    },
+    "executive_summary": {
+      "type": "object",
+      "properties": {
+        "client_name": { "type": "string" },
+        "worker_name": { "type": "string" },
+        "termination_cause": { "type": "string" },
+        "recommended_action": { "type": "string" },
+        "net_payable": { "type": "number" },
+        "total_client_cash_cost": { "type": "number" }
+      }
+    },
+    "scenario_comparison": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "scenario_id": { "type": "string" },
+          "net_payable": { "type": "number" },
+          "employer_cost": { "type": "number" },
+          "risk": { "type": "string" },
+          "assumptions": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "risk_flags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "severity": { "type": "string" },
+          "message": { "type": "string" },
+          "action": { "type": "string" }
+        }
+      }
+    },
+    "evidence_checklist": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "document_type": { "type": "string" },
+          "required": { "type": "boolean" },
+          "received": { "type": "boolean" },
+          "blocking_if_missing": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}
+

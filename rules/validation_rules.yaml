@@ -1,0 +1,55 @@
+validations:
+  - code: FUERO_BLOCKER
+    severity: BLOCKER
+    condition: "evidence.fuero == true && !evidence.desafuero_authorized"
+    message: "Worker has fuero/protected status. Execution blocked unless authorized."
+    required_action: "Partner review and legal authorization path."
+
+  - code: MEDICAL_LEAVE_ART_161_BLOCKER
+    severity: BLOCKER
+    condition: "evidence.medical_leave == true && termination.cause_code in ['NECESIDADES_EMPRESA','DESAHUCIO_CONFIANZA']"
+    message: "Medical leave conflicts with art. 161/desahucio execution path."
+    required_action: "Change route or obtain partner legal review."
+
+  - code: COTIZACIONES_UNPAID_BLOCKER
+    severity: BLOCKER
+    condition: "evidence.cotizaciones_paid == false"
+    message: "Unpaid cotizaciones create nulidad exposure."
+    required_action: "Regularize or quantify nulidad scenario."
+
+  - code: PUBLIC_SECTOR_ROUTE_BLOCKER
+    severity: BLOCKER
+    condition: "contract.legal_regime in ['PUBLIC_STATUTORY','MUNICIPAL']"
+    message: "Public-sector case cannot use ordinary private finiquito engine as executable."
+    required_action: "Route to public-sector module."
+
+  - code: HONORARIOS_RECHARACTERIZATION_REVIEW
+    severity: BLOCKER
+    condition: "contract.legal_regime == 'HONORARIOS' && risk.honorarios_recharacterization in ['HIGH','CRITICAL']"
+    message: "Honorarios case has employment recharacterization risk."
+    required_action: "Run full Código del Trabajo challenge scenario."
+
+  - code: AFC_OFFSET_REVIEW
+    severity: WARNING
+    condition: "termination.afc_offset_attempted == true"
+    message: "Employer AFC offset attempted. Requires explicit legal approval."
+    required_action: "Partner approval or remove offset."
+
+  - code: DEDUCTION_SUPPORT
+    severity: WARNING
+    condition: "payroll.authorized_deductions > 0 && evidence.deduction_authorization_uploaded == false"
+    message: "Deductions require support and authorization."
+    required_action: "Upload authorization or exclude deduction."
+
+  - code: BONUS_SUPPORT
+    severity: WARNING
+    condition: "payroll.taxable_bonus > 0 && evidence.bonus_policy_uploaded == false"
+    message: "Bonus requires contract/policy/devengo support."
+    required_action: "Upload policy or require lawyer override."
+
+  - code: REIMBURSEMENT_SUPPORT
+    severity: WARNING
+    condition: "payroll.reimbursements > 0 && evidence.reimbursement_receipts_uploaded == false"
+    message: "Reimbursements require receipts and business purpose."
+    required_action: "Upload receipts or treat as unresolved."
+

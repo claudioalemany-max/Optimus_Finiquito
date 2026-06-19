@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "calculation_result.schema.json",
+  "title": "Chile Finiquito Calculation Result",
+  "type": "object",
+  "required": [
+    "case_id",
+    "rule_version",
+    "status",
+    "scenarios",
+    "blockers",
+    "warnings",
+    "audit"
+  ],
+  "properties": {
+    "case_id": { "type": "string" },
+    "rule_version": { "type": "string" },
+    "status": {
+      "enum": [
+        "EXECUTABLE",
+        "EXECUTABLE_WITH_WARNINGS",
+        "NOT_EXECUTABLE_BLOCKED",
+        "LEGAL_REVIEW_REQUIRED"
+      ]
+    },
+    "blockers": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/risk_item" }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/risk_item" }
+    },
+    "scenarios": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["scenario_id", "label", "amounts", "trace"],
+        "properties": {
+          "scenario_id": { "type": "string" },
+          "label": { "type": "string" },
+          "risk_level": { "type": "string" },
+          "amounts": {
+            "type": "object",
+            "properties": {
+              "indemnity_base": { "type": "number" },
+              "ias_legal": { "type": "number" },
+              "notice_indemnity": { "type": "number" },
+              "obra_faena_indemnity": { "type": "number" },
+              "vacation_payment": { "type": "number" },
+              "taxable_gross": { "type": "number" },
+              "worker_contributions": { "type": "number" },
+              "iusc": { "type": "number" },
+              "non_taxable_total": { "type": "number" },
+              "reimbursements": { "type": "number" },
+              "authorized_deductions": { "type": "number" },
+              "net_payable": { "type": "number" },
+              "employer_contributions": { "type": "number" },
+              "total_client_cash_cost": { "type": "number" }
+            }
+          },
+          "trace": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/trace_line" }
+          }
+        }
+      }
+    },
+    "audit": {
+      "type": "object",
+      "properties": {
+        "calculated_at": { "type": "string", "format": "date-time" },
+        "calculated_by": { "type": "string" },
+        "ruleset_hash": { "type": "string" }
+      }
+    }
+  },
+  "$defs": {
+    "risk_item": {
+      "type": "object",
+      "required": ["code", "severity", "message"],
+      "properties": {
+        "code": { "type": "string" },
+        "severity": { "enum": ["INFO", "WARNING", "BLOCKER", "CRITICAL"] },
+        "message": { "type": "string" },
+        "required_action": { "type": "string" }
+      }
+    },
+    "trace_line": {
+      "type": "object",
+      "required": ["line_id", "amount", "formula", "rule_refs"],
+      "properties": {
+        "line_id": { "type": "string" },
+        "amount": { "type": "number" },
+        "formula": { "type": "string" },
+        "inputs": { "type": "array", "items": { "type": "string" } },
+        "rule_refs": { "type": "array", "items": { "type": "string" } },
+        "assumptions": { "type": "array", "items": { "type": "string" } },
+        "warnings": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}
+

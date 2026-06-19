@@ -1,0 +1,133 @@
+ruleset:
+  id: CL_FINIQUITO_RULES
+  version: "2026-06"
+  jurisdiction: CL
+  status: draft_for_lawyer_review
+  effective_from: "2026-06-18"
+  notes:
+    - "All monetary and rate values must be verified before production use."
+    - "IUSC brackets must be updated monthly from SII."
+    - "This ruleset is for product implementation, not final legal advice."
+
+sources:
+  codigo_trabajo: "https://www.bcn.cl/leychile/navegar?idNorma=207436"
+  dt_simulador: "https://www.dt.gob.cl/m/1620/w3-article-101172.html"
+  dt_base: "https://www.dt.gob.cl/portal/1628/w3-article-60585.html"
+  dt_feriado: "https://www.dt.gob.cl/portal/1628/w3-article-60200.html"
+  sii_iusc_2026: "https://www.sii.cl/valores_y_fechas/impuesto_2da_categoria/impuesto2026.htm"
+  sp_afc: "https://www.spensiones.cl/portal/institucional/594/w3-article-3590.html"
+  afc_employer: "https://www.afc.cl/empleadores/esta-formando-una-empresa/cotizaciones-cuanto-y-como-debo-pagar/"
+
+parameters:
+  ias_year_cap:
+    value: 11
+    unit: years
+    rule_ref: CL_CT_ART_163
+  ias_monthly_cap_uf:
+    value: 90
+    unit: UF
+    rule_ref: CL_CT_ART_172
+  obra_faena_days_per_month:
+    value: 2.5
+    unit: days
+    rule_ref: CL_CT_ART_163
+  notice_indemnity_months:
+    value: 1
+    unit: month
+    rule_ref: CL_CT_ART_162
+
+rates:
+  afp_worker:
+    default: 0.1144
+    configurable_by: afp_provider
+  health_worker:
+    default: 0.07
+    configurable_by: health_plan
+  afc_worker_indefinite:
+    default: 0.006
+  afc_employer_indefinite:
+    default: 0.024
+  afc_employer_fixed_or_work:
+    default: 0.03
+  sis_employer:
+    default: 0.0149
+    must_verify_current_rate: true
+  mutual_employer:
+    default: 0.0093
+    configurable_by: employer_risk_rate
+  employer_pension:
+    default: 0.01
+    must_verify_current_rate: true
+
+payment_treatments:
+  pending_salary:
+    taxable: true
+    worker_contributions: true
+    employer_contributions: true
+  taxable_bonus:
+    taxable: true
+    worker_contributions: true
+    employer_contributions: true
+    evidence_required:
+      - contract_or_policy
+      - devengo
+      - proportionality_rule
+  ias_legal:
+    taxable: false
+    worker_contributions: false
+    employer_contributions: false
+  notice_indemnity:
+    taxable: false
+    worker_contributions: false
+    employer_contributions: false
+    requires_limit_review: true
+  vacation_payment:
+    taxable: false
+    worker_contributions: false
+    employer_contributions: false
+  reimbursements:
+    taxable: false
+    worker_contributions: false
+    employer_contributions: false
+    evidence_required:
+      - receipt
+      - business_purpose
+      - approval
+
+iusc_monthly_table_2026_06:
+  currency: CLP
+  source: sii_iusc_2026
+  brackets:
+    - from: 0
+      to: 965331
+      factor: 0
+      rebate: 0
+    - from: 965331.01
+      to: 2145180
+      factor: 0.04
+      rebate: 38613.24
+    - from: 2145180.01
+      to: 3575300
+      factor: 0.08
+      rebate: 124420.44
+    - from: 3575300.01
+      to: 5005420
+      factor: 0.135
+      rebate: 321061.94
+    - from: 5005420.01
+      to: 6435540
+      factor: 0.23
+      rebate: 796576.84
+    - from: 6435540.01
+      to: 8580720
+      factor: 0.304
+      rebate: 1272679.46
+    - from: 8580720.01
+      to: 22133574
+      factor: 0.35
+      rebate: 1667392.58
+    - from: 22133574.01
+      to: 999999999999
+      factor: 0.40
+      rebate: 2774071.28
+

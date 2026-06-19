@@ -1,0 +1,67 @@
+{
+  "case_id": "CASE-2026-HON-001",
+  "rule_version": "2026-06",
+  "client": {
+    "name": "Municipalidad / Cliente Público",
+    "rut": "69.000.000-0"
+  },
+  "worker": {
+    "name": "Prestador Honorarios",
+    "rut": "13.111.222-3",
+    "role": "Coordinador Programa"
+  },
+  "contract": {
+    "legal_regime": "HONORARIOS",
+    "contract_type": "HONORARIOS",
+    "start_date": "2021-01-01",
+    "end_date": "2026-05-31",
+    "collective_agreement": false,
+    "high_trust_role": false
+  },
+  "termination": {
+    "cause_code": "HONORARIOS_RIESGO",
+    "notice_given_30_days": false,
+    "afc_offset_attempted": false
+  },
+  "payroll": {
+    "fixed_salary": 1800000,
+    "avg_variable_3m": 0,
+    "included_allowances": 0,
+    "pending_salary": 1800000,
+    "taxable_bonus": 0,
+    "non_taxable_bonus_or_indemnity": 0,
+    "reimbursements": 0,
+    "authorized_deductions": 0,
+    "vacation_business_days": 0,
+    "vacation_calendar_days": 0
+  },
+  "evidence": {
+    "fuero": false,
+    "medical_leave": false,
+    "cotizaciones_paid": false,
+    "business_need_evidence": false,
+    "bonus_policy_uploaded": false,
+    "reimbursement_receipts_uploaded": false
+  },
+  "risk_factors": {
+    "fixed_schedule": true,
+    "direct_supervision": true,
+    "monthly_fixed_payment": true,
+    "uses_employer_tools": true,
+    "permanent_functions": true
+  },
+  "config": {
+    "uf_value": 39000,
+    "rates": {
+      "afp_worker": 0.1144,
+      "health_worker": 0.07,
+      "afc_worker_indefinite": 0.006,
+      "afc_employer_indefinite": 0.024,
+      "afc_employer_fixed_or_work": 0.03,
+      "sis_employer": 0.0149,
+      "mutual_employer": 0.0093,
+      "employer_pension": 0.01
+    }
+  }
+}
+
