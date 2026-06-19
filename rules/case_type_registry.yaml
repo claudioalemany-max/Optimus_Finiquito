@@ -1,0 +1,337 @@
+case_types:
+  - code: PRIVATE_ART161_NEEDS
+    menu_group: Private employer
+    label: Art. 161 necesidades empresa
+    description: Despido por necesidades de la empresa con prueba litigiosa
+    cause_code: NECESIDADES_EMPRESA
+    stage_route: STAGE2
+    example_file: employer_case_private_art161.json
+    required_fields:
+      - contract.start_date
+      - contract.end_date
+      - termination.notice_given_30_days
+      - payroll.fixed_salary
+      - case_fields.specific_business_reason
+    required_evidence:
+      - contract
+      - payslips
+      - dismissal_letter
+      - dt_filing
+      - cotizaciones_certificate
+      - business_evidence
+    enabled_modules:
+      - proof_gate
+      - calculation
+      - tax_review
+      - scenarios
+      - report
+    blockers:
+      - FUERO
+      - MEDICAL_LEAVE_ART161
+      - NO_COTIZACIONES
+      - GENERIC_CARTA
+
+  - code: PRIVATE_ART161_DESAHUCIO
+    menu_group: Private employer
+    label: Art. 161 desahucio/confianza
+    description: Desahucio por confianza en cargo de alta dirección
+    cause_code: DESAHUCIO_CONFIANZA
+    stage_route: STAGE2
+    required_fields:
+      - contract.start_date
+      - contract.end_date
+      - contract.high_trust_role
+      - termination.notice_given_30_days
+      - payroll.fixed_salary
+    required_evidence:
+      - contract
+      - dismissal_letter
+      - dt_filing
+      - cotizaciones_certificate
+    enabled_modules:
+      - proof_gate
+      - calculation
+      - scenarios
+      - report
+    blockers:
+      - FUERO
+      - NO_COTIZACIONES
+      - NOT_HIGH_TRUST
+
+  - code: PRIVATE_ART160_DISCIPLINARY
+    menu_group: Private employer
+    label: Art. 160 disciplinary
+    description: Despido disciplinario con prueba de hechos
+    cause_code: DISCIPLINARIA_160
+    stage_route: STAGE2
+    required_fields:
+      - contract.start_date
+      - contract.end_date
+      - case_fields.incident_date
+      - case_fields.disciplinary_facts
+      - payroll.fixed_salary
+    required_evidence:
+      - incident_record
+      - investigation_file
+      - dismissal_letter
+      - dt_filing
+      - cotizaciones_certificate
+    enabled_modules:
+      - proof_gate
+      - calculation
+      - report
+    blockers:
+      - GENERIC_CARTA
+      - NO_DISCIPLINARY_EVIDENCE
+
+  - code: PRIVATE_ART159_FIXED_TERM
+    menu_group: Private employer
+    label: Fixed-term expiration
+    description: Término de contrato a plazo fijo
+    cause_code: VENCIMIENTO_PLAZO
+    stage_route: STAGE1
+    required_fields:
+      - contract.start_date
+      - contract.end_date
+      - payroll.fixed_salary
+    required_evidence:
+      - contract
+      - payslips
+    enabled_modules:
+      - calculation
+      - report
+    blockers:
+      - INDEFINITE_CONVERSION_RISK
+
+  - code: PRIVATE_ART159_WORK_SERVICE
+    menu_group: Private employer
+    label: Obra/faena termination
+    description: Término de obra o faena
+    cause_code: OBRA_FAENA_TERMINO
+    stage_route: STAGE2
+    required_fields:
+      - contract.start_date
+      - contract.end_date
+      - payroll.obra_faena_months
+      - payroll.fixed_salary
+    required_evidence:
+      - contract
+      - work_completion_evidence
+      - cotizaciones_certificate
+    enabled_modules:
+      - calculation
+      - scenarios
+      - report
+    blockers:
+      - NO_COMPLETION_PROOF
+
+  - code: PRIVATE_ART159_MUTUAL
+    menu_group: Private employer
+    label: Mutual agreement
+    description: Mutuo acuerdo de terminación
+    cause_code: MUTUO_ACUERDO
+    stage_route: STAGE1
+    required_fields:
+      - contract.start_date
+      - contract.end_date
+      - payroll.fixed_salary
+    required_evidence:
+      - contract
+      - mutual_agreement
+    enabled_modules:
+      - calculation
+      - report
+    blockers: []
+
+  - code: PRIVATE_ART159_RESIGNATION
+    menu_group: Private employer
+    label: Resignation
+    description: Renuncia voluntaria del trabajador
+    cause_code: RENUNCIA
+    stage_route: STAGE1
+    required_fields:
+      - contract.end_date
+      - termination.resignation_voluntary_evidence
+      - payroll.fixed_salary
+    required_evidence:
+      - signed_resignation
+      - cotizaciones_certificate
+    enabled_modules:
+      - calculation
+      - scenarios
+      - report
+    blockers:
+      - INVALID_RESIGNATION
+
+  - code: PROTECTED_FUERO
+    menu_group: Protected worker
+    label: Fuero / protected status
+    description: Trabajador con fuero o protección especial
+    cause_code: NECESIDADES_EMPRESA
+    stage_route: BLOCKER
+    required_fields:
+      - evidence.fuero
+      - case_fields.fuero_type
+    required_evidence:
+      - fuero_documents
+    enabled_modules:
+      - proof_gate
+      - report
+    blockers:
+      - FUERO
+
+  - code: PROTECTED_MEDICAL_LEAVE
+    menu_group: Protected worker
+    label: Medical leave + termination
+    description: Licencia médica con ruta art. 161
+    cause_code: NECESIDADES_EMPRESA
+    stage_route: BLOCKER
+    required_fields:
+      - evidence.medical_leave
+      - contract.end_date
+    required_evidence:
+      - medical_leave_certificate
+    enabled_modules:
+      - proof_gate
+      - report
+    blockers:
+      - MEDICAL_LEAVE_ART161
+
+  - code: RISK_UNPAID_COTIZACIONES
+    menu_group: Risk case
+    label: Unpaid cotizaciones / nulidad
+    description: Cotizaciones impagas y exposición nulidad
+    cause_code: NECESIDADES_EMPRESA
+    stage_route: STAGE2
+    example_file: honorarios_recharacterization_case.json
+    required_fields:
+      - evidence.cotizaciones_paid
+      - case_fields.unpaid_months
+    required_evidence:
+      - previred_certificate
+    enabled_modules:
+      - proof_gate
+      - scenarios
+      - report
+    blockers:
+      - NO_COTIZACIONES
+
+  - code: RISK_AFC_OFFSET
+    menu_group: Risk case
+    label: AFC offset review
+    description: Compensación AFC del empleador
+    cause_code: NECESIDADES_EMPRESA
+    stage_route: STAGE2
+    required_fields:
+      - termination.afc_offset_attempted
+      - payroll.fixed_salary
+    required_evidence:
+      - partner_approval
+    enabled_modules:
+      - calculation
+      - scenarios
+      - report
+    blockers:
+      - AFC_OFFSET_REVIEW
+
+  - code: SPECIAL_HONORARIOS
+    menu_group: Special regime
+    label: Honorarios recharacterization
+    description: Prestación de servicios con riesgo laboral
+    cause_code: HONORARIOS_RIESGO
+    stage_route: STAGE3
+    example_file: honorarios_recharacterization_case.json
+    required_fields:
+      - contract.legal_regime
+      - payroll.fixed_salary
+    required_evidence:
+      - contract
+      - schedule_evidence
+      - supervision_evidence
+    enabled_modules:
+      - proof_gate
+      - scenarios
+      - report
+    blockers:
+      - HONORARIOS_RECHARACTERIZATION
+
+  - code: SPECIAL_PUBLIC_SECTOR
+    menu_group: Special regime
+    label: Public-sector / contrata
+    description: Funcionario o contrata del sector público
+    cause_code: SECTOR_PUBLICO_CONTRATA
+    stage_route: STAGE3
+    example_file: public_sector_case.json
+    required_fields:
+      - contract.legal_regime
+      - contract.end_date
+    required_evidence:
+      - administrative_act
+      - renewal_history
+    enabled_modules:
+      - proof_gate
+      - report
+    blockers:
+      - PUBLIC_SECTOR_ROUTE
+
+field_catalog:
+  client_name: { path: client.name, type: string, label: Cliente }
+  employee_name: { path: worker.name, type: string, label: Trabajador }
+  start_date: { path: contract.start_date, type: date, label: Fecha inicio }
+  end_date: { path: contract.end_date, type: date, label: Fecha término }
+  notice_given: { path: termination.notice_given_30_days, type: boolean, label: Aviso 30 días dado }
+  fixed_salary: { path: payroll.fixed_salary, type: money, label: Sueldo base }
+  avg_variable_3m: { path: payroll.avg_variable_3m, type: money, label: Variable 3 meses }
+  pending_salary: { path: payroll.pending_salary, type: money, label: Remuneración pendiente }
+  vacation_days: { path: payroll.vacation_calendar_days, type: number, label: Días feriado }
+  specific_business_reason: { path: case_fields.specific_business_reason, type: text, label: Motivo empresarial específico }
+  high_trust_role: { path: contract.high_trust_role, type: boolean, label: Cargo de confianza }
+  incident_date: { path: case_fields.incident_date, type: date, label: Fecha del incidente }
+  disciplinary_facts: { path: case_fields.disciplinary_facts, type: text, label: Hechos disciplinarios }
+  fuero_type: { path: case_fields.fuero_type, type: string, label: Tipo de fuero }
+  unpaid_months: { path: case_fields.unpaid_months, type: number, label: Meses impagos }
+  voluntary_evidence: { path: termination.resignation_voluntary_evidence, type: boolean, label: Evidencia voluntariedad }
+
+section_fields:
+  case_setup:
+    - client_name
+    - employee_name
+    - start_date
+    - end_date
+  termination:
+    - specific_business_reason
+    - notice_given
+    - high_trust_role
+    - incident_date
+    - disciplinary_facts
+    - fuero_type
+    - voluntary_evidence
+  payroll:
+    - fixed_salary
+    - avg_variable_3m
+    - pending_salary
+    - vacation_days
+  risk_flags:
+    - unpaid_months
+
+evidence_labels:
+  contract: Contrato de trabajo
+  payslips: Liquidaciones de sueldo
+  dismissal_letter: Carta de despido
+  dt_filing: Comunicación DT
+  cotizaciones_certificate: Certificado cotizaciones
+  business_evidence: Prueba necesidades empresa
+  incident_record: Registro del incidente
+  investigation_file: Investigación interna
+  work_completion_evidence: Prueba término obra/faena
+  mutual_agreement: Acuerdo mutuo
+  signed_resignation: Renuncia firmada
+  fuero_documents: Documentos de fuero
+  medical_leave_certificate: Certificado licencia médica
+  previred_certificate: Certificado Previred
+  partner_approval: Aprobación socio
+  schedule_evidence: Evidencia horario
+  supervision_evidence: Evidencia subordinación
+  administrative_act: Acto administrativo
+  renewal_history: Historial renovaciones
+  dt_filing_proof: Comprobante filing DT

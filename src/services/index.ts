@@ -28,3 +28,10 @@ export { buildEvidenceMatrix } from "./evidence-engine.js";
 export { scoreBurdenOfProof } from "./burden-of-proof-engine.js";
 export { reviewDismissalLetter } from "./dismissal-letter-review.js";
 export { buildTribunalExportJson, buildLitigationCaseFile } from "./tribunal-export.js";
+export {
+  loadCaseTypeRegistry,
+  getCaseType,
+  listCaseTypesGrouped,
+  getInputSchema,
+} from "./case-type-registry-service.js";
+export { validateCaseTypeInput } from "./case-type-validation-service.js";

@@ -71,7 +71,10 @@ function amountRows(scenario: Scenario): string {
     .join("");
 }
 
-export function renderHtmlReport(result: ProcessFiniquitoResult): string {
+export function renderHtmlReport(
+  result: ProcessFiniquitoResult,
+  options?: { draft?: boolean },
+): string {
   const { input, report, calculation, classification } = result;
   const employer =
     calculation.scenarios.find((s) => s.scenario_id === "EMPLOYER_INTENDED") ?? calculation.scenarios[0];
@@ -207,6 +210,17 @@ export function renderHtmlReport(result: ProcessFiniquitoResult): string {
       padding: 16px;
       font-size: 0.92rem;
     }
+    .draft-banner {
+      background: #fef3c7;
+      border: 2px dashed #b45309;
+      color: #92400e;
+      text-align: center;
+      font-weight: 700;
+      padding: 12px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      letter-spacing: 0.04em;
+    }
     @media print {
       body { background: white; }
       .hero { color: black; background: none; border: 1px solid var(--border); }
@@ -214,6 +228,7 @@ export function renderHtmlReport(result: ProcessFiniquitoResult): string {
   </style>
 </head>
 <body>
+  ${options?.draft ? '<div class="draft-banner">BORRADOR — NO APTO PARA ENTREGA AL CLIENTE</div>' : ""}
   <div class="wrap">
     <header class="hero">
       <h1>Reporte Finiquito — Chile</h1>

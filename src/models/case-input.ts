@@ -1,5 +1,6 @@
 import type { Money } from "./common.js";
 import type { DismissalLetter, EvidenceItem, FiniquitoExecution } from "./fix1.js";
+import type { CaseFields } from "./case-type.js";
 
 export type LegalRegime =
   | "PRIVATE_CODIGO_TRABAJO"
@@ -113,6 +114,7 @@ export interface PublicSectorFactors {
 
 export interface CaseInput {
   case_id: string;
+  case_type_code?: string;
   rule_version?: string;
   client: Client;
   worker: Worker;
@@ -126,4 +128,5 @@ export interface CaseInput {
   evidence_items?: EvidenceItem[];
   dismissal_letter?: DismissalLetter;
   finiquito_execution?: FiniquitoExecution;
+  case_fields?: CaseFields;
 }

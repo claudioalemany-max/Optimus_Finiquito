@@ -19,6 +19,7 @@
 
       <nav class="menu">
         <button class="menu-item active" data-view="home">Inicio</button>
+        <button class="menu-item" data-view="cases">Nuevo caso</button>
         <button class="menu-item" data-view="examples">Ejemplos</button>
         <button class="menu-item" data-view="upload">Caso propio</button>
         <button class="menu-item" data-view="recent">Historial</button>
@@ -37,6 +38,31 @@
           <p>Selecciona un caso de ejemplo o carga tu propio JSON para calcular el finiquito.</p>
         </header>
         <div id="home-cards" class="cards"></div>
+      </section>
+
+      <section id="view-cases" class="view">
+        <header class="page-header">
+          <h2>Menú de casos</h2>
+          <p>Selecciona el tipo de caso para cargar solo los campos y evidencias relevantes.</p>
+        </header>
+        <div id="case-type-menu" class="case-menu"></div>
+        <div id="case-workspace" class="case-workspace hidden">
+          <div class="case-workspace-header">
+            <div>
+              <h3 id="case-workspace-title">Caso</h3>
+              <p id="case-workspace-meta" class="muted"></p>
+            </div>
+            <div class="case-actions">
+              <button id="case-validate" class="btn ghost">Validar</button>
+              <button id="case-draft" class="btn secondary">Cálculo borrador</button>
+              <button id="case-final" class="btn primary">Revisión final</button>
+            </div>
+          </div>
+          <div id="case-warnings" class="case-warnings"></div>
+          <div id="case-form-tabs" class="form-tabs"></div>
+          <div id="case-form-sections" class="form-sections"></div>
+          <div id="case-validation" class="validation-panel hidden"></div>
+        </div>
       </section>
 
       <section id="view-examples" class="view">

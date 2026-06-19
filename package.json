@@ -17,7 +17,7 @@
     "start": "node dist/cli/serve.js",
     "web": "npm run build && node dist/cli/serve.js",
     "typecheck": "tsc --noEmit",
-    "test": "npm run build && node --test dist/tests/engine.test.js dist/tests/workflow.test.js dist/tests/fix1.test.js",
+    "test": "npm run build && node --test dist/tests/engine.test.js dist/tests/workflow.test.js dist/tests/fix1.test.js dist/tests/fix2.test.js",
     "calculate": "npm run build && node dist/cli/calculate.js",
     "calculate:honorarios": "npm run build && node dist/cli/calculate.js examples/honorarios_recharacterization_case.json",
     "calculate:public": "npm run build && node dist/cli/calculate.js examples/public_sector_case.json"

@@ -1,5 +1,6 @@
 {
   "case_id": "CASE-2026-001",
+  "case_type_code": "PRIVATE_ART161_NEEDS",
   "rule_version": "2026-06",
   "client": {
     "name": "Cliente SpA",

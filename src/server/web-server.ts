@@ -3,6 +3,16 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { CaseInput } from "../models/case-input.js";
+import {
+  handleApproveCase,
+  handleCalculateCase,
+  handleCreateCase,
+  handleGetCase,
+  handleGetCaseTypes,
+  handleGetInputSchema,
+  handleUpdateCase,
+  handleValidateCase,
+} from "../services/case-api-service.js";
 import { runCaseAndSave } from "../services/run-case-service.js";
 
 const packageRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -159,6 +169,109 @@ function serveOutputJson(fileName: string, res: ServerResponse): void {
 async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
   const url = new URL(req.url ?? "/", `http://127.0.0.1:${PORT}`);
   const { pathname } = url;
+
+  if (req.method === "GET" && pathname === "/api/case-types") {
+    sendJson(res, 200, handleGetCaseTypes());
+    return;
+  }
+
+  const inputSchemaMatch = pathname.match(/^\/api\/case-types\/([^/]+)\/input-schema$/);
+  if (req.method === "GET" && inputSchemaMatch) {
+    try {
+      const code = decodeURIComponent(inputSchemaMatch[1]!);
+      sendJson(res, 200, handleGetInputSchema(code));
+    } catch (error) {
+      sendJson(res, 404, { error: error instanceof Error ? error.message : "No encontrado" });
+    }
+    return;
+  }
+
+  if (req.method === "POST" && pathname === "/api/cases") {
+    try {
+      const raw = await readBody(req);
+      const body = JSON.parse(raw) as { case_type_code?: string };
+      sendJson(res, 201, handleCreateCase(body));
+    } catch (error) {
+      sendJson(res, 400, { error: error instanceof Error ? error.message : "Error al crear caso" });
+    }
+    return;
+  }
+
+  const caseMatch = pathname.match(/^\/api\/cases\/([^/]+)(?:\/(validate|calculate|approve|report))?$/);
+  if (caseMatch) {
+    const caseId = decodeURIComponent(caseMatch[1]!);
+    const action = caseMatch[2];
+
+    if (req.method === "GET" && !action) {
+      try {
+        sendJson(res, 200, handleGetCase(caseId));
+      } catch (error) {
+        sendJson(res, 404, { error: error instanceof Error ? error.message : "No encontrado" });
+      }
+      return;
+    }
+
+    if (req.method === "PATCH" && !action) {
+      try {
+        const raw = await readBody(req);
+        const body = JSON.parse(raw) as {
+          values?: Record<string, string | number | boolean>;
+          input?: Partial<CaseInput>;
+        };
+        sendJson(res, 200, handleUpdateCase(caseId, body));
+      } catch (error) {
+        sendJson(res, 400, { error: error instanceof Error ? error.message : "Error al actualizar" });
+      }
+      return;
+    }
+
+    if (req.method === "POST" && action === "validate") {
+      try {
+        sendJson(res, 200, handleValidateCase(caseId));
+      } catch (error) {
+        sendJson(res, 404, { error: error instanceof Error ? error.message : "No encontrado" });
+      }
+      return;
+    }
+
+    if (req.method === "POST" && action === "calculate") {
+      try {
+        const mode = url.searchParams.get("mode") === "final" ? "final" : "draft";
+        sendJson(res, 200, handleCalculateCase(caseId, mode, outputDir));
+      } catch (error) {
+        const validation = (error as { validation?: unknown }).validation;
+        if (validation) {
+          sendJson(res, 422, {
+            error: error instanceof Error ? error.message : "Validación fallida",
+            validation,
+          });
+          return;
+        }
+        sendJson(res, 400, { error: error instanceof Error ? error.message : "Error al calcular" });
+      }
+      return;
+    }
+
+    if (req.method === "POST" && action === "approve") {
+      try {
+        sendJson(res, 200, handleApproveCase(caseId));
+      } catch (error) {
+        sendJson(res, 404, { error: error instanceof Error ? error.message : "No encontrado" });
+      }
+      return;
+    }
+
+    if (req.method === "GET" && action === "report") {
+      try {
+        const mode = url.searchParams.get("mode") === "final" ? "final" : "draft";
+        const payload = handleCalculateCase(caseId, mode, outputDir);
+        sendJson(res, 200, payload);
+      } catch (error) {
+        sendJson(res, 400, { error: error instanceof Error ? error.message : "Error al generar reporte" });
+      }
+      return;
+    }
+  }
 
   if (req.method === "GET" && pathname === "/api/examples") {
     sendJson(res, 200, EXAMPLES);

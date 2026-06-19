@@ -20,7 +20,15 @@ export interface SavedCaseResult {
   paths: SavedCasePaths;
 }
 
-export function runCaseAndSave(input: CaseInput, outputDir: string): SavedCaseResult {
+export interface RunCaseOptions {
+  draft?: boolean;
+}
+
+export function runCaseAndSave(
+  input: CaseInput,
+  outputDir: string,
+  options?: RunCaseOptions,
+): SavedCaseResult {
   mkdirSync(outputDir, { recursive: true });
 
   const result = processFiniquitoCase(input);
@@ -39,7 +47,7 @@ export function runCaseAndSave(input: CaseInput, outputDir: string): SavedCaseRe
   writeFileSync(paths.full, JSON.stringify(result, null, 2), "utf8");
   writeFileSync(paths.report, JSON.stringify(result.report, null, 2), "utf8");
   writeFileSync(paths.calculation, JSON.stringify(result.calculation, null, 2), "utf8");
-  writeFileSync(paths.html, renderHtmlReport(result), "utf8");
+  writeFileSync(paths.html, renderHtmlReport(result, { draft: options?.draft }), "utf8");
   writeFileSync(paths.tribunal, buildTribunalExportJson(result), "utf8");
   writeFileSync(
     join(outputDir, "last-run.txt"),
