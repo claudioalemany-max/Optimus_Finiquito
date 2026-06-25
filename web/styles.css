@@ -202,7 +202,26 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-top: 20px;
 }
+.module-view { margin-bottom: 8px; }
+.advanced-actions { margin-bottom: 16px; }
+.complex-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+.complex-actions { display: flex; gap: 10px; margin: 12px 0; }
+.complex-output {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 12px;
+  max-height: 320px;
+  overflow: auto;
+  font-size: 0.85rem;
+}
+.link-action { color: var(--accent); }
 
 .recent-item {
   background: var(--card);
@@ -313,6 +332,15 @@ body {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .hidden { display: none !important; }
+
+.load-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  padding: 16px 18px;
+  color: #991b1b;
+}
+.load-error p { margin: 8px 0 0; color: #b91c1c; }
 
 .case-group { margin-bottom: 28px; }
 .case-group h3 {

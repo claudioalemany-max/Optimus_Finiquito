@@ -1,7 +1,9 @@
 import type { CaseInput } from "../models/case-input.js";
 import type { TraceLine } from "../models/common.js";
 import type { CalculationContext, ComputedScenario, LegalClassification } from "../models/engine.js";
-import type { IuscBracket } from "../models/ruleset.js";
+import { calculatePendingBenefits } from "../core/benefits-engine.js";
+import { calculateIusc, calculateTaxTreatment } from "../core/tax-engine.js";
+import { calculateVacation } from "../core/vacation-engine.js";
 
 function effectiveClassification(
   classification: LegalClassification,
@@ -36,10 +38,7 @@ export function calculateService(startDate: string, endDate: string, yearCap: nu
   return { fullYears, remainingMonths, indemnizableYears };
 }
 
-export function calculateIusc(base: number, brackets: IuscBracket[]): number {
-  const bracket = brackets.find((b) => base >= b.from && base <= b.to) ?? brackets[brackets.length - 1];
-  return Math.max(0, base * bracket.factor - bracket.rebate);
-}
+export { calculateIusc } from "../core/tax-engine.js";
 
 export function calculateScenario(ctx: CalculationContext, scenarioId: string): ComputedScenario {
   const { input, rules, classification, overrides } = ctx;
@@ -112,56 +111,17 @@ export function calculateScenario(ctx: CalculationContext, scenarioId: string): 
     });
   }
 
-  const vacationPayment = effective.vacationPayable
-    ? (indemnityBase / 30) * (input.payroll.vacation_calendar_days ?? 0)
-    : 0;
-
-  if (vacationPayment > 0) {
-    trace.push({
-      line_id: "VACATION_PAYMENT",
-      amount: vacationPayment,
-      formula: "(indemnity_base / 30) * vacation_calendar_days",
-      inputs: ["indemnity_base", "vacation_calendar_days"],
-      rule_refs: ["CL_CT_FERIADO"],
-    });
-  }
-
-  const taxableGross =
-    input.payroll.pending_salary +
-    input.payroll.taxable_bonus +
-    (input.payroll.conventional_indemnity_taxable ?? 0);
-
-  trace.push({
-    line_id: "TAXABLE_GROSS",
-    amount: taxableGross,
-    formula: "pending_salary + taxable_bonus + conventional_indemnity_taxable",
-    inputs: ["pending_salary", "taxable_bonus"],
-    rule_refs: ["CL_TAX_REMUNERATION"],
+  const vacation = calculateVacation({
+    indemnity_base: indemnityBase,
+    vacation_calendar_days: input.payroll.vacation_calendar_days ?? 0,
+    vacation_payable: effective.vacationPayable,
   });
+  trace.push(...vacation.trace);
+  const vacationPayment = vacation.vacation_payment;
 
-  const workerContributionRate =
-    rate(input, "afp_worker") +
-    rate(input, "health_worker") +
-    (input.contract.contract_type === "INDEFINITE" ? rate(input, "afc_worker_indefinite") : 0);
-
-  const workerContributions = taxableGross * workerContributionRate;
-  trace.push({
-    line_id: "WORKER_CONTRIBUTIONS",
-    amount: workerContributions,
-    formula: "taxable_gross * (afp + health + afc_worker)",
-    inputs: ["taxable_gross"],
-    rule_refs: ["CL_PREVISIONAL_WORKER"],
-  });
-
-  const iuscBase = Math.max(0, taxableGross - workerContributions);
-  const iusc = calculateIusc(iuscBase, rules.iusc_monthly_table_2026_06.brackets);
-  trace.push({
-    line_id: "IUSC",
-    amount: iusc,
-    formula: "max(0, iusc_base * bracket_factor - bracket_rebate)",
-    inputs: ["taxable_gross", "worker_contributions"],
-    rule_refs: ["CL_SII_IUSC"],
-  });
+  const pendingBenefits = calculatePendingBenefits(input);
+  const tax = calculateTaxTreatment(input, rules.iusc_monthly_table_2026_06.brackets);
+  trace.push(...tax.trace);
 
   const nonTaxableTotal =
     iasLegal +
@@ -170,13 +130,14 @@ export function calculateScenario(ctx: CalculationContext, scenarioId: string): 
     vacationPayment +
     (input.payroll.non_taxable_bonus_or_indemnity ?? 0);
 
-  const reimbursements = input.payroll.reimbursements ?? 0;
+  const reimbursements = pendingBenefits.travel_reimbursements;
   const deductions =
     (input.payroll.authorized_deductions ?? 0) > 0 && !input.evidence?.deduction_authorization_uploaded
       ? 0
       : (input.payroll.authorized_deductions ?? 0);
 
-  const netPayable = nonTaxableTotal + taxableGross - workerContributions - iusc + reimbursements - deductions;
+  const netPayable =
+    nonTaxableTotal + tax.taxable_gross - tax.worker_contributions - tax.iusc + reimbursements - deductions;
 
   trace.push({
     line_id: "NET_PAYABLE",
@@ -193,8 +154,8 @@ export function calculateScenario(ctx: CalculationContext, scenarioId: string): 
     rate(input, "mutual_employer") +
     rate(input, "employer_pension");
 
-  const employerContributions = taxableGross * employerContributionRate;
-  const totalClientCashCost = nonTaxableTotal + taxableGross + reimbursements + employerContributions;
+  const employerContributions = tax.taxable_gross * employerContributionRate;
+  const totalClientCashCost = nonTaxableTotal + tax.taxable_gross + reimbursements + employerContributions;
 
   trace.push({
     line_id: "EMPLOYER_CASH_COST",
@@ -223,9 +184,9 @@ export function calculateScenario(ctx: CalculationContext, scenarioId: string): 
       notice_indemnity: noticeIndemnity,
       obra_faena_indemnity: obraFaenaIndemnity,
       vacation_payment: vacationPayment,
-      taxable_gross: taxableGross,
-      worker_contributions: workerContributions,
-      iusc,
+      taxable_gross: tax.taxable_gross,
+      worker_contributions: tax.worker_contributions,
+      iusc: tax.iusc,
       non_taxable_total: nonTaxableTotal,
       reimbursements,
       authorized_deductions: deductions,

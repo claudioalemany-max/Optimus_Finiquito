@@ -8,11 +8,18 @@ import {
   handleCalculateCase,
   handleCreateCase,
   handleGetCase,
+  handleGetAppModules,
   handleGetCaseTypes,
   handleGetInputSchema,
   handleUpdateCase,
   handleValidateCase,
 } from "../services/case-api-service.js";
+import {
+  handleCalculateComplexCase,
+  handleCreateComplexCase,
+  handleGetComplexCase,
+  handleUpdateComplexCase,
+} from "../services/complex-case-api-service.js";
 import { runCaseAndSave } from "../services/run-case-service.js";
 
 const packageRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -169,6 +176,62 @@ function serveOutputJson(fileName: string, res: ServerResponse): void {
 async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
   const url = new URL(req.url ?? "/", `http://127.0.0.1:${PORT}`);
   const { pathname } = url;
+
+  if (req.method === "POST" && pathname === "/api/complex-cases") {
+    try {
+      const raw = await readBody(req);
+      const body = JSON.parse(raw) as {
+        run_mode?: "executive_complex" | "batch";
+        employee_count?: number;
+        termination_date?: string;
+      };
+      sendJson(res, 201, handleCreateComplexCase(body));
+    } catch (error) {
+      sendJson(res, 400, { error: error instanceof Error ? error.message : "Error al crear caso complejo" });
+    }
+    return;
+  }
+
+  const complexCaseMatch = pathname.match(/^\/api\/complex-cases\/([^/]+)(?:\/calculate)?$/);
+  if (complexCaseMatch) {
+    const caseId = decodeURIComponent(complexCaseMatch[1]!);
+    const isCalculate = pathname.endsWith("/calculate");
+
+    if (req.method === "GET" && !isCalculate) {
+      try {
+        sendJson(res, 200, handleGetComplexCase(caseId));
+      } catch (error) {
+        sendJson(res, 404, { error: error instanceof Error ? error.message : "No encontrado" });
+      }
+      return;
+    }
+
+    if (req.method === "PATCH" && !isCalculate) {
+      try {
+        const raw = await readBody(req);
+        const body = JSON.parse(raw);
+        sendJson(res, 200, handleUpdateComplexCase(caseId, body));
+      } catch (error) {
+        sendJson(res, 400, { error: error instanceof Error ? error.message : "Error al actualizar" });
+      }
+      return;
+    }
+
+    if (req.method === "POST" && isCalculate) {
+      try {
+        const mode = url.searchParams.get("mode") === "final" ? "final" : "draft";
+        sendJson(res, 200, handleCalculateComplexCase(caseId, mode));
+      } catch (error) {
+        sendJson(res, 400, { error: error instanceof Error ? error.message : "Error al calcular" });
+      }
+      return;
+    }
+  }
+
+  if (req.method === "GET" && pathname === "/api/app-modules") {
+    sendJson(res, 200, handleGetAppModules());
+    return;
+  }
 
   if (req.method === "GET" && pathname === "/api/case-types") {
     sendJson(res, 200, handleGetCaseTypes());

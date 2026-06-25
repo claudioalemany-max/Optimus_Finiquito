@@ -17,12 +17,25 @@ async function main(): Promise<void> {
     const { alreadyRunning } = await startWebServer();
 
     if (alreadyRunning) {
+      let apiReady = false;
+      try {
+        const probe = await fetch(`${url}/api/app-modules`);
+        apiReady = probe.ok;
+      } catch {
+        apiReady = false;
+      }
+
       console.log("");
       console.log("=== Chile Finiquito — Modo navegador ===");
-      console.log(`El servidor ya estaba activo en el puerto ${port}.`);
-      console.log(`URL: ${url}`);
-      console.log("");
-      console.log("Si el navegador no se abrio, usa el enlace de arriba.");
+      if (apiReady) {
+        console.log(`El servidor ya estaba activo en el puerto ${port}.`);
+        console.log(`URL: ${url}`);
+        console.log("");
+        console.log("Si el navegador no se abrio, usa el enlace de arriba.");
+      } else {
+        console.log(`Hay otro proceso en el puerto ${port}, pero no responde la API unificada.`);
+        console.log("Cierra la ventana negra anterior del servidor y vuelve a ejecutar run-finiquito.bat.");
+      }
       await waitForEnter("Presiona Enter para cerrar esta ventana...");
       return;
     }

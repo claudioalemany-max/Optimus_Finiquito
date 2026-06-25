@@ -23,6 +23,19 @@
 11. Fuero or protected worker.
 12. Medical leave restriction case.
 13. Employee challenge scenario: unjustified dismissal, nulidad, invalid resignation, unpaid cotizaciones.
+14. Executive severance with contractual uplift and Art. 17 N°13 LIR analysis.
+15. Batch termination of multiple employees with consolidated exposure.
+
+## Fix3 Complex outputs (executive / batch)
+
+In addition to standard finiquito outputs:
+
+- Parameter snapshot (UF, UTM, IPC month, rule version)
+- Art. 17 N°13 table (24-month average, non-taxable limit, taxable excess)
+- IUSC reliquidation bridge (monthly allocation, tax before/after, total IUSC)
+- Four-scenario comparison with delta vs employer preferred
+- Per-employee and consolidated totals for batch mode
+- Deduction evidence validation (mutuos, advances, offsets)
 
 ## Product outputs
 

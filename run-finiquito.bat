@@ -2,7 +2,7 @@
 setlocal EnableExtensions
 cd /d "%~dp0"
 
-title Chile Finiquito — Navegador
+title Chile Labor Termination — Navegador
 
 call "%~dp0scripts\find-node.bat"
 if errorlevel 1 (
@@ -44,6 +44,9 @@ echo.
 echo El navegador se abrira automaticamente cuando el servidor este listo.
 echo Cierra esta ventana para detener el servidor.
 echo.
+
+rem Cerrar servidor antiguo si no expone la API unificada
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\ensure-fresh-server.ps1"
 
 rem Abrir navegador en segundo plano (metodo nativo de Windows)
 start "FiniquitoBrowser" /min cmd /c "call "%~dp0scripts\wait-and-open-browser.bat" "http://127.0.0.1:3847/""

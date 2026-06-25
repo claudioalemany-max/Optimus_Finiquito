@@ -35,3 +35,9 @@ export {
   getInputSchema,
 } from "./case-type-registry-service.js";
 export { validateCaseTypeInput } from "./case-type-validation-service.js";
+export { listAppModules, APP_MODULES, resolveAppModule } from "./app-module-service.js";
+export {
+  calculatePendingBenefits,
+  calculateTaxTreatment,
+  calculateVacation,
+} from "../core/index.js";

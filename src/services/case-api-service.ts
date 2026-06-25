@@ -7,6 +7,7 @@ import {
   getCaseSession,
   updateCaseSession,
 } from "./case-session-store.js";
+import { listAppModules } from "./app-module-service.js";
 import {
   getCaseType,
   getInputSchema,
@@ -63,6 +64,10 @@ function buildCaseApiPayload(
 
 export function handleGetCaseTypes() {
   return listCaseTypesGrouped();
+}
+
+export function handleGetAppModules() {
+  return listAppModules();
 }
 
 export function handleGetInputSchema(code: string) {

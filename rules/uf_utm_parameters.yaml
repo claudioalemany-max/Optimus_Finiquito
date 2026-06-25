@@ -1,0 +1,6 @@
+# Date-sensitive macro parameters — verify before production use.
+effective_from: "2026-06-01"
+uf_value: 39250
+utm_value: 68647
+ipc_reference_month: "2026-06"
+iusc_table_month: "2026-06"

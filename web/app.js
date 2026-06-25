@@ -1,13 +1,27 @@
 const views = {
-  home: document.getElementById("view-home"),
-  cases: document.getElementById("view-cases"),
-  examples: document.getElementById("view-examples"),
-  upload: document.getElementById("view-upload"),
-  recent: document.getElementById("view-recent"),
+  private: document.getElementById("view-private"),
+  executive: document.getElementById("view-executive"),
+  batch: document.getElementById("view-batch"),
+  honorarios: document.getElementById("view-honorarios"),
+  public: document.getElementById("view-public"),
+  reports: document.getElementById("view-reports"),
 };
 
-const homeCards = document.getElementById("home-cards");
-const exampleCards = document.getElementById("example-cards");
+const moduleMenus = {
+  private: document.getElementById("menu-private"),
+  honorarios: document.getElementById("menu-honorarios"),
+  public: document.getElementById("menu-public"),
+};
+
+// API module codes differ from sidebar view keys
+const moduleViewKey = {
+  private_employee: "private",
+  executive_complex: "executive",
+  batch_termination: "batch",
+  honorarios: "honorarios",
+  public_sector: "public",
+};
+
 const recentList = document.getElementById("recent-list");
 const resultPanel = document.getElementById("result-panel");
 const resultTitle = document.getElementById("result-title");
@@ -24,8 +38,8 @@ let uploadedCase = null;
 let activeCaseSession = null;
 let activeCaseSchema = null;
 let activeTab = "case_setup";
+let appModules = [];
 
-const caseTypeMenu = document.getElementById("case-type-menu");
 const caseWorkspace = document.getElementById("case-workspace");
 const caseWorkspaceTitle = document.getElementById("case-workspace-title");
 const caseWorkspaceMeta = document.getElementById("case-workspace-meta");
@@ -50,7 +64,7 @@ function switchView(name) {
   document.querySelectorAll(".menu-item").forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.view === name);
   });
-  if (name === "cases" && !caseTypeMenu.children.length) loadCaseTypes();
+  if (name === "reports") loadRecent();
 }
 
 function stageBadge(route) {
@@ -58,19 +72,27 @@ function stageBadge(route) {
   return `<span class="stage-badge" style="background:${colors[route] || "#64748b"}">${route}</span>`;
 }
 
-async function loadCaseTypes() {
-  const res = await fetch("/api/case-types");
-  const groups = await res.json();
-  caseTypeMenu.innerHTML = "";
+function renderModuleCaseTypes(module) {
+  const viewKey = moduleViewKey[module.code] ?? module.code;
+  const container = moduleMenus[viewKey];
+  if (!container) return;
+  container.innerHTML = "";
 
-  groups.forEach((group) => {
+  const groups = new Map();
+  module.case_types.forEach((item) => {
+    const list = groups.get(item.menu_group) ?? [];
+    list.push(item);
+    groups.set(item.menu_group, list);
+  });
+
+  groups.forEach((items, groupName) => {
     const block = document.createElement("div");
     block.className = "case-group";
-    block.innerHTML = `<h3>${group.menu_group}</h3>`;
+    block.innerHTML = `<h3>${groupName}</h3>`;
     const grid = document.createElement("div");
     grid.className = "cards";
 
-    group.items.forEach((item) => {
+    items.forEach((item) => {
       const card = document.createElement("article");
       card.className = "card case-type-card";
       card.innerHTML = `
@@ -83,8 +105,32 @@ async function loadCaseTypes() {
     });
 
     block.appendChild(grid);
-    caseTypeMenu.appendChild(block);
+    container.appendChild(block);
   });
+}
+
+function showModuleLoadError(message) {
+  const html = `<div class="load-error"><strong>No se pudieron cargar los casos.</strong><p>${message}</p></div>`;
+  Object.values(moduleMenus).forEach((container) => {
+    if (container) container.innerHTML = html;
+  });
+}
+
+async function loadAppModules() {
+  try {
+    const res = await fetch("/api/app-modules");
+    if (!res.ok) {
+      throw new Error(
+        res.status === 404
+          ? "El servidor es una version antigua. Cierra la ventana negra anterior y ejecuta run-finiquito.bat de nuevo."
+          : `Error del servidor (${res.status}).`,
+      );
+    }
+    appModules = await res.json();
+    appModules.forEach((module) => renderModuleCaseTypes(module));
+  } catch (error) {
+    showModuleLoadError(error.message || "Reinicia run-finiquito.bat e intenta otra vez.");
+  }
 }
 
 async function openCaseType(code) {
@@ -114,6 +160,7 @@ async function openCaseType(code) {
 
     renderCaseForm();
     caseValidation.classList.add("hidden");
+    caseWorkspace.scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (error) {
     alert(error.message || "Error al abrir caso");
   } finally {
@@ -272,36 +319,13 @@ caseFinalBtn.addEventListener("click", async () => {
   }
 });
 
-function renderExampleCard(example, container, compact = false) {
-  const card = document.createElement("article");
-  card.className = "card";
-  card.innerHTML = `
-    <h3>${example.label}</h3>
-    <p>${example.description}</p>
-    ${compact ? '<p style="margin-top:10px;color:#2563eb;font-size:0.85rem">Ejecutar →</p>' : ""}
-  `;
-  card.addEventListener("click", () => runExample(example.id));
-  container.appendChild(card);
-}
-
-async function loadExamples() {
-  const res = await fetch("/api/examples");
-  const examples = await res.json();
-  homeCards.innerHTML = "";
-  exampleCards.innerHTML = "";
-  examples.forEach((ex) => {
-    renderExampleCard(ex, homeCards, true);
-    renderExampleCard(ex, exampleCards, false);
-  });
-}
-
 async function loadRecent() {
   const res = await fetch("/api/recent");
   const items = await res.json();
   recentList.innerHTML = "";
 
   if (!items.length) {
-    recentList.innerHTML = "<p style='color:#64748b'>No hay reportes guardados aún.</p>";
+    recentList.innerHTML = "<p class='muted'>No hay reportes guardados aún.</p>";
     return;
   }
 
@@ -311,9 +335,9 @@ async function loadRecent() {
     row.innerHTML = `
       <div>
         <strong>${item.case_id}</strong>
-        <div style="color:#64748b;font-size:0.85rem">${new Date(item.mtime).toLocaleString("es-CL")}</div>
+        <div class="muted">${new Date(item.mtime).toLocaleString("es-CL")}</div>
       </div>
-      <span style="color:#2563eb">Abrir →</span>
+      <span class="link-action">Abrir →</span>
     `;
     row.addEventListener("click", () => openReportUrl(item.html_url, item.case_id));
     recentList.appendChild(row);
@@ -365,25 +389,6 @@ function openReportUrl(url, caseId) {
   });
 }
 
-async function runExample(exampleId) {
-  showLoading(true);
-  try {
-    const res = await fetch("/api/calculate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ exampleId }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Error al calcular");
-    showResult(data);
-    loadRecent();
-  } catch (error) {
-    alert(error.message || "Error al calcular");
-  } finally {
-    showLoading(false);
-  }
-}
-
 async function runUploadedCase() {
   if (!uploadedCase) return;
   showLoading(true);
@@ -396,7 +401,6 @@ async function runUploadedCase() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Error al calcular");
     showResult(data);
-    switchView("home");
     loadRecent();
   } catch (error) {
     alert(error.message || "Error al calcular");
@@ -406,10 +410,7 @@ async function runUploadedCase() {
 }
 
 document.querySelectorAll(".menu-item").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    switchView(btn.dataset.view);
-    if (btn.dataset.view === "recent") loadRecent();
-  });
+  btn.addEventListener("click", () => switchView(btn.dataset.view));
 });
 
 document.getElementById("open-report").addEventListener("click", () => {
@@ -439,5 +440,87 @@ fileInput.addEventListener("change", async (event) => {
 
 uploadRun.addEventListener("click", runUploadedCase);
 
-loadExamples();
+async function openComplexCase(runMode, workspaceId) {
+  showLoading(true);
+  try {
+    const res = await fetch("/api/complex-cases", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        run_mode: runMode,
+        employee_count: runMode === "batch" ? 6 : 1,
+      }),
+    });
+    const created = await res.json();
+    if (!res.ok) throw new Error(created.error || "No se pudo crear el caso");
+
+    const workspace = document.getElementById(workspaceId);
+    workspace.classList.remove("hidden");
+    workspace.innerHTML = `
+      <div class="complex-panel">
+        <h3>Caso ${created.case_id}</h3>
+        <p class="muted">${runMode === "batch" ? created.employees.length + " trabajadores" : "1 ejecutivo"} · UF ${created.parameter_snapshot.uf_value.toLocaleString("es-CL")}</p>
+        <div class="complex-actions">
+          <button class="btn secondary" data-action="draft">Cálculo borrador</button>
+          <button class="btn primary" data-action="final">Revisión final</button>
+        </div>
+        <pre class="complex-output muted">Complete datos del trabajador y ejecute un cálculo borrador.</pre>
+      </div>
+    `;
+
+    workspace.querySelectorAll("[data-action]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        showLoading(true);
+        try {
+          const mode = btn.dataset.action;
+          const calcRes = await fetch(`/api/complex-cases/${encodeURIComponent(created.case_id)}/calculate?mode=${mode}`, {
+            method: "POST",
+          });
+          const data = await calcRes.json();
+          if (!calcRes.ok) throw new Error(data.error || "Error al calcular");
+          const c = data.calculation.consolidated;
+          workspace.querySelector(".complex-output").textContent = JSON.stringify(
+            {
+              validation: data.validation,
+              consolidated: c,
+              scenario_deltas: data.calculation.scenario_deltas,
+            },
+            null,
+            2,
+          );
+          showResult({
+            case_id: data.case_id,
+            status: data.draft ? "DRAFT" : "FINAL",
+            workflow: runMode,
+            draft: data.draft,
+            net_payable: c.total_net,
+            employer_cost: c.total_gross + c.total_tax,
+            report_url: "",
+            blockers: data.validation.blockers,
+          });
+        } catch (error) {
+          alert(error.message);
+        } finally {
+          showLoading(false);
+        }
+      });
+    });
+  } catch (error) {
+    alert(error.message || "Error al abrir caso complejo");
+  } finally {
+    showLoading(false);
+  }
+}
+
+document.getElementById("start-executive").addEventListener("click", () => {
+  switchView("executive");
+  openComplexCase("executive_complex", "complex-workspace");
+});
+
+document.getElementById("start-batch").addEventListener("click", () => {
+  switchView("batch");
+  openComplexCase("batch", "batch-workspace");
+});
+
+loadAppModules();
 loadRecent();

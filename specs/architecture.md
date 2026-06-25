@@ -104,6 +104,26 @@ Computes:
 - Net payable.
 - Employer cash cost.
 
+Shared logic is in `src/core/` (`tax-engine`, `vacation-engine`, `benefits-engine`). `calculation-engine.ts` orchestrates private-sector scenarios.
+
+### ComplexCaseEngine (Fix3 Complex)
+
+Used for executive and batch termination modes. Orchestrates:
+
+- `ipc-adjustment-engine` — IPC-adjusted 24-month remuneration average
+- `art17-n13-engine` — Art. 17 N°13 non-taxable limit and taxable excess
+- `iusc-reliquidation-engine` — monthly IUSC allocation on severance excess
+- `deduction-evidence-engine` — mutuos/advances with evidence gate
+- `complex-indemnity-engine` — contractual days/year, uplift, anniversary warning
+- `batch-employee-engine` — per-employee results, consolidated totals, scenario deltas
+
+Entry points:
+
+- `POST /api/complex-cases`
+- `POST /api/complex-cases/:id/calculate`
+
+Models: `src/models/complex-case.ts`. See `specs/fix3-complex.md`.
+
 ### ReportService
 
 Builds:

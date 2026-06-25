@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Chile Finiquito Engine</title>
+  <title>Chile Labor Termination Engine</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -12,86 +12,103 @@
       <div class="brand">
         <div class="logo">⚖</div>
         <div>
-          <h1>Finiquito Engine</h1>
-          <p>Chile · Asesoría laboral</p>
+          <h1>Labor Termination</h1>
+          <p>Chile · Finiquito unificado</p>
         </div>
       </div>
 
       <nav class="menu">
-        <button class="menu-item active" data-view="home">Inicio</button>
-        <button class="menu-item" data-view="cases">Nuevo caso</button>
-        <button class="menu-item" data-view="examples">Ejemplos</button>
-        <button class="menu-item" data-view="upload">Caso propio</button>
-        <button class="menu-item" data-view="recent">Historial</button>
+        <button class="menu-item active" data-view="private">Trabajador empresa privada</button>
+        <button class="menu-item" data-view="executive">Ejecutivo / indemnización compleja</button>
+        <button class="menu-item" data-view="batch">Batch termination</button>
+        <button class="menu-item" data-view="honorarios">Contrato a honorarios</button>
+        <button class="menu-item" data-view="public">Sector público</button>
+        <button class="menu-item" data-view="reports">Reportes generados</button>
       </nav>
 
       <div class="sidebar-footer">
-        <p>Servidor local activo</p>
+        <p>Un solo programa · motores modulares</p>
         <p class="muted">Sujeto a revisión legal</p>
       </div>
     </aside>
 
     <main class="content">
-      <section id="view-home" class="view active">
+      <section id="view-private" class="view active module-view">
         <header class="page-header">
-          <h2>Bienvenido</h2>
-          <p>Selecciona un caso de ejemplo o carga tu propio JSON para calcular el finiquito.</p>
+          <h2>Trabajador empresa privada</h2>
+          <p>Despidos, finiquitos y causales del Código del Trabajo.</p>
         </header>
-        <div id="home-cards" class="cards"></div>
+        <div id="menu-private" class="case-menu"></div>
       </section>
 
-      <section id="view-cases" class="view">
+      <section id="view-executive" class="view module-view">
         <header class="page-header">
-          <h2>Menú de casos</h2>
-          <p>Selecciona el tipo de caso para cargar solo los campos y evidencias relevantes.</p>
+          <h2>Ejecutivo / indemnización compleja</h2>
+          <p>Art. 17 N°13 LIR, IUSC reliquidado, cláusulas contractuales y escenarios comparados.</p>
         </header>
-        <div id="case-type-menu" class="case-menu"></div>
-        <div id="case-workspace" class="case-workspace hidden">
-          <div class="case-workspace-header">
-            <div>
-              <h3 id="case-workspace-title">Caso</h3>
-              <p id="case-workspace-meta" class="muted"></p>
-            </div>
-            <div class="case-actions">
-              <button id="case-validate" class="btn ghost">Validar</button>
-              <button id="case-draft" class="btn secondary">Cálculo borrador</button>
-              <button id="case-final" class="btn primary">Revisión final</button>
-            </div>
-          </div>
-          <div id="case-warnings" class="case-warnings"></div>
-          <div id="case-form-tabs" class="form-tabs"></div>
-          <div id="case-form-sections" class="form-sections"></div>
-          <div id="case-validation" class="validation-panel hidden"></div>
+        <div class="advanced-actions">
+          <button id="start-executive" class="btn primary">Nuevo caso ejecutivo</button>
         </div>
+        <div id="complex-workspace" class="complex-workspace hidden"></div>
       </section>
 
-      <section id="view-examples" class="view">
+      <section id="view-batch" class="view module-view">
         <header class="page-header">
-          <h2>Casos de ejemplo</h2>
-          <p>Ejecuta un escenario preconfigurado del catálogo.</p>
+          <h2>Batch termination / varios trabajadores</h2>
+          <p>Carga múltiple de trabajadores, totales consolidados y delta de escenarios.</p>
         </header>
-        <div id="example-cards" class="cards"></div>
+        <div class="advanced-actions">
+          <button id="start-batch" class="btn primary">Nuevo batch (6 trabajadores)</button>
+        </div>
+        <div id="batch-workspace" class="complex-workspace hidden"></div>
       </section>
 
-      <section id="view-upload" class="view">
+      <section id="view-honorarios" class="view module-view">
         <header class="page-header">
-          <h2>Caso personalizado</h2>
-          <p>Sube un archivo JSON con el formato de entrada del caso.</p>
+          <h2>Contrato a honorarios</h2>
+          <p>Prestación de servicios, retenciones y riesgo de relación laboral.</p>
+        </header>
+        <div id="menu-honorarios" class="case-menu"></div>
+      </section>
+
+      <section id="view-public" class="view module-view">
+        <header class="page-header">
+          <h2>Sector público</h2>
+          <p>Contrata, estatuto administrativo y actos administrativos.</p>
+        </header>
+        <div id="menu-public" class="case-menu"></div>
+      </section>
+
+      <section id="view-reports" class="view">
+        <header class="page-header">
+          <h2>Reportes generados</h2>
+          <p>Historial de cálculos y carga de casos JSON personalizados.</p>
         </header>
         <div class="upload-box">
           <input type="file" id="file-input" accept=".json,application/json">
-          <button id="upload-run" class="btn primary" disabled>Calcular caso</button>
+          <button id="upload-run" class="btn primary" disabled>Calcular caso JSON</button>
         </div>
         <pre id="upload-preview" class="preview hidden"></pre>
-      </section>
-
-      <section id="view-recent" class="view">
-        <header class="page-header">
-          <h2>Historial reciente</h2>
-          <p>Reportes generados en esta sesión o anteriores.</p>
-        </header>
         <div id="recent-list" class="recent-list"></div>
       </section>
+
+      <div id="case-workspace" class="case-workspace hidden">
+        <div class="case-workspace-header">
+          <div>
+            <h3 id="case-workspace-title">Caso</h3>
+            <p id="case-workspace-meta" class="muted"></p>
+          </div>
+          <div class="case-actions">
+            <button id="case-validate" class="btn ghost">Validar</button>
+            <button id="case-draft" class="btn secondary">Cálculo borrador</button>
+            <button id="case-final" class="btn primary">Revisión final</button>
+          </div>
+        </div>
+        <div id="case-warnings" class="case-warnings"></div>
+        <div id="case-form-tabs" class="form-tabs"></div>
+        <div id="case-form-sections" class="form-sections"></div>
+        <div id="case-validation" class="validation-panel hidden"></div>
+      </div>
 
       <section id="result-panel" class="result-panel hidden">
         <div class="result-header">
